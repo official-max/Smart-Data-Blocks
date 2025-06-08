@@ -1,0 +1,117 @@
+/* admin\assets\admin.css */
+.sdb-admin .sdb-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.sdb-field-groups,
+.sdb-fields-list {
+    width: 40%;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+}
+
+.sdb-group-editor,
+.sdb-field-editor {
+    width: 60%;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+}
+
+.sdb-form-row {
+    margin-bottom: 20px;
+}
+
+.sdb-form-row label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.sdb-form-row input[type="text"],
+.sdb-form-row select {
+    width: 100%;
+    max-width: 500px;
+}
+
+.sdb-group-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sdb-group-list li {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sdb-group-list li:last-child {
+    border-bottom: none;
+}
+
+.sdb-group-list li a {
+    text-decoration: none;
+}
+
+.sdb-group-actions a {
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.sdb-form-actions {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* Add this to your admin CSS */
+.sdb-location-info {
+    background: #f7f7f7;
+    padding: 8px 12px;
+    border-left: 4px solid #0073aa;
+    margin-top: 5px;
+}
+
+.sdb-location-rule {
+    background: #f7f7f7;
+    padding: 8px 12px;
+    border-left: 4px solid #0073aa;
+    margin: 10px 0;
+    display: inline-block;
+}
+
+.sdb-group-location {
+    font-size: 13px;
+    color: #666;
+    margin-top: 3px;
+}
+
+
+.sdb-field {
+    padding: 2.5px 5px;
+    max-width: fit-content;
+    margin-top: 5px;
+}
+
+.field-type-select {
+    margin-top: -6px;
+}
+
+.field-group {
+    padding: 0px 12px;
+    border-radius: 5px;
+}
+
+.repeater-field-group {
+    border: 1px solid #0075ac;
+    background-color: #aee5ff1f;
+    border-radius: 5px;
+}
