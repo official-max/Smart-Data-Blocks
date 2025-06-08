@@ -65,18 +65,74 @@ created_at      -- timestamp
 
 
 
+/***********************************************************************************************************/
+/****************************************=== Smart Blocks ===***********************************************/
+/***********************************************************************************************************/
+
+=== Smart Blocks ===
+Contributors: jatincode
+Tags: custom-fields, acf, repeater, image-upload, meta-box
+Requires at least: 5.0
+Tested up to: 6.5
+Stable tag: 1.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+A lightweight ACF-style custom field manager plugin with repeater support, image upload, editor fields, and post-based location rules.
+
+== Description ==
+
+Smart Blocks is a developer-friendly plugin to create and manage custom meta fields like ACF (Advanced Custom Fields), including:
+- Text, Textarea, Image, Editor fields
+- Repeater fields with nested subfields
+- Location rules like Post Type, Specific Page, Page Template
+- Dynamic backend meta box rendering
+- Frontend field value access using `sdb_get_field()` function
 
 
 
 
+== Features ==
 
-/* Get Field Data */
+- 🧠 Field Types: text, textarea, image, editor, repeater
+- 📦 Group-wise field management
+- 📍 Location Rules:
+  - Post Type
+  - Specific Post/Page
+  - Page Template
+- 🖼️ Image upload via WordPress media uploader
+- 🔁 Repeater fields with dynamic subfields
+- 🧩 Dynamic metabox render on post/page edit
+- 🔌 Extendable with your own custom JS & PHP
 
-Get Single Field:
-$name = sdb_get_field('group_key', 'field_name', );
+== Usage ==
 
-Get All Fields in Group:
-$fields = sdb_get_field(group_key);
+**1. Creating Field Groups:**
+- Go to **Smart Blocks → Add Group**
+- Add fields inside each group (supports nested repeater)
+
+**2. Location Rules:**
+- You can assign field groups to:
+  - All posts of a specific type
+  - A specific post/page
+  - Pages using a specific template
+
+**3. Access Field Values in Theme (Frontend):**
+
+Use the helper function:
+
+```php
+// Get a single field
+$value = sdb_get_field('group_slug', 'field_name');
+
+// Get all fields of a group
+$data = sdb_get_field('group_slug');
+
+// Get Field specific post using post ID
+$data = sdb_get_field('group_slug', 'field_name', PostID);
+
+
+
 
 
 
@@ -96,29 +152,23 @@ class-metaboxes.php	Adds metabox on post edit screen based on location rules
 admin.js	Dynamically updates "Location Rules" UI
 metaboxes.js	Handles media upload and dynamic repeater UI
 
-✅ WORKING SUMMARY
-1. Group Creation (settings-page.php)
-Location rules saved as JSON in sdb_groups.location
 
-Post type, page/post, page template rules supported
-
-2. Field Creation (settings-fields.php)
-Supports: text, textarea, image, repeater
-
-Repeater supports nested fields
-
-Saved as JSON in sdb_fields.config
-
-3. Metabox Display (class-metaboxes.php)
-Dynamically adds metabox based on location rule match
-
-Supports all 4 field types in metabox
-
-Uses wp.media and custom JS to render complex fields
-
-4. Frontend Save (save_post)
-Handles sanitize + save for all types
-
-Repeater saves nested field data as JSON
-
-Image saves attachment ID
+smart-blocks/
+│
+├── smart-blocks.php             → Main plugin loader – defines constants, loads files
+├── readme.txt                   → You're reading it!
+│
+├── admin/
+│   ├── class-admin.php          → Admin menu, UI loader (page loading)
+│   ├── class-metaboxes.php      → Metabox render + save logic
+│   ├── settings-page.php        → Group creation page
+│   ├── settings-fields.php      → Field management UI
+│   ├── assets/
+│   │   ├── admin.js             → Admin-side JS (for field builder UI)
+│   │   ├── metaboxes.js         → Metabox field handling (repeater, image upload)
+│   │   └── admin.css            → Admin panel styling (if needed)
+│
+├── includes/
+│   ├── db-schema.php            → Creates database tables (groups, fields)
+│   ├── ajax.php                 → AJAX handlers (delete field, etc.)
+│   ├── field-rendering.php      → Contains `sdb_get_field()` and output helpers
