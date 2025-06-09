@@ -128,7 +128,7 @@ class SDB_Metaboxes
 ?>
                     <p>
                         <label for="<?= $meta_key ?>"><?= $label ?></label><br>
-                        <input type="text" name="<?= $field_name ?>" id="<?= $meta_key ?>" value="<?= esc_attr($value); ?>" style="width:100%;" />
+                        <input type="text" name="<?= $field_name ?>" id="<?= $meta_key ?>" value="<?= esc_attr($value); ?>" />
                     </p>
                 <?php
                     break;
@@ -137,7 +137,7 @@ class SDB_Metaboxes
                 ?>
                     <p>
                         <label for="<?= $meta_key ?>"><?= $label ?></label><br>
-                        <textarea name="<?= $field_name ?>" id="<?= $meta_key ?>" rows="4" style="width:100%;"><?= esc_textarea($value); ?></textarea>
+                        <textarea name="<?= $field_name ?>" id="<?= $meta_key ?>" rows="4"><?= esc_textarea($value); ?></textarea>
                     </p>
                 <?php
                     break;
@@ -149,7 +149,7 @@ class SDB_Metaboxes
                 ?>
                     <p>
                         <label><?= $label ?></label><br>
-                        <img src="<?= esc_url($image_url) ?>" alt="" style="max-width:150px; display:block; margin-bottom:5px;" id="<?= $meta_key ?>_preview" />
+                        <img src="<?= esc_url($image_url) ?>" alt="" id="<?= $meta_key ?>_preview" />
                         <input type="hidden" name="<?= $field_name ?>" id="<?= $meta_key ?>" value="<?= esc_attr($value); ?>" />
                         <button type="button" class="button sdb-upload-image" data-target="<?= $meta_key ?>">Select Image</button>
                         <button type="button" class="button sdb-remove-image" data-target="<?= $meta_key ?>">Remove Image</button>
@@ -199,7 +199,7 @@ class SDB_Metaboxes
 
                                         switch ($subtype) {
                                             case 'textarea':
-                                                echo '<p><textarea name="' . $field_name . '[' . $i . '][' . esc_attr($subname) . ']" rows="3" style="width:90%;">' . esc_textarea($subval) . '</textarea></p>';
+                                                echo '<p><textarea name="' . $field_name . '[' . $i . '][' . esc_attr($subname) . ']" rows="3">' . esc_textarea($subval) . '</textarea></p>';
                                                 break;
 
                                             case 'image':
@@ -208,7 +208,7 @@ class SDB_Metaboxes
 
                                                 echo <<<HTML
                                                     <p>
-                                                        <img src="{$img_url}" alt="" style="max-width:150px; display:block; margin-bottom:5px;" id="{$input_id}_preview" />
+                                                        <img src="{$img_url}" alt="" id="{$input_id}_preview" />
                                                         <input type="hidden" name="{$field_name}[{$i}][{$subname}]" id="{$input_id}" value="{$img_url}" />
                                                         <button type="button" class="button sdb-upload-image" data-target="{$input_id}">Select Image</button>
                                                         <button type="button" class="button sdb-remove-image" data-target="{$input_id}">Remove Image</button>
@@ -219,7 +219,7 @@ class SDB_Metaboxes
 
 
                                             default: // text
-                                                echo '<input type="text" name="' . $field_name . '[' . $i . '][' . esc_attr($subname) . ']" value="' . esc_attr($subval) . '" style="width:90%;" />';
+                                                echo '<input type="text" name="' . $field_name . '[' . $i . '][' . esc_attr($subname) . ']" value="' . esc_attr($subval) . '" />';
                                                 break;
                                         }
 
@@ -288,11 +288,12 @@ class SDB_Metaboxes
                             $sanitized_item = [];
                             foreach ($config['sub_fields'] as $sub) {
                                 $key = $sub['name'];
-                                $sanitized_item[$key] = sanitize_text_field($item[$key] ?? ''); // Repeater fields sanitize
+                                $sanitized_item[$key] = wp_kses_post($item[$key] ?? '');
                             }
                             $sanitized_items[] = $sanitized_item;
                         }
-                        update_post_meta($post_id, 'sdb_field_' . intval($field_id), wp_json_encode($sanitized_items));
+                        $json_data = wp_json_encode($sanitized_items);
+                        update_post_meta($post_id, 'sdb_field_' . intval($field_id), $json_data);
                     } else {
                         update_post_meta($post_id, 'sdb_field_' . intval($field_id), '');
                     }
