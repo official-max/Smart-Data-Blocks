@@ -43,7 +43,7 @@ class SDB_Admin
 
         // Global JS in Header
         wp_enqueue_script(
-            'sdb-admin',
+            'sdb-global',
             SDB_URL . 'admin/assets/js/function.js',
             ['jquery', 'wp-util'],
             SDB_VER,
