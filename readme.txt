@@ -104,3 +104,34 @@ smart-blocks/
 │   ├── ajax.php                 → AJAX handlers (delete field, load dropdowns)
 │   ├── field-rendering.php      → Contains `sdb_get_field()` and output helpers
 
+
+
+
+/***********************************************************************************************************/
+/****************************************=== Issues ===***********************************************/
+/***********************************************************************************************************/
+
+This plugin includes a fix for an issue where long text or a large number of repeater fields (especially when nested) do not save properly in WordPress. The issue occurs due to server-side limits such as max_input_vars, post_max_size, and database field types.
+
+📌 Problem
+When submitting forms with many repeater rows or large text areas, data was not saving to the WordPress database. The issue was due to:
+
+PHP's max_input_vars limit (default is 1000)
+
+Large serialized data exceeding allowed POST size
+
+meta_value column in the wp_postmeta table not supporting large content
+
+Over-sanitization breaking the structure (wp_kses_post() on big content)
+
+✅ Solution Implemented
+Increased max_input_vars to 10000
+
+Ensured post_max_size, memory_limit, and upload_max_filesize were sufficient
+
+Changed database column type to LONGTEXT (if needed)
+
+Used safer sanitization (sanitize_textarea_field() or wp_kses() as required)
+
+Removed wp_die() or debugging print_r() from production code
+
