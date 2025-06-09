@@ -57,6 +57,28 @@ jQuery(document).ready(function ($) {
         loadValues($newParam, $newValue);
         index++;
     });
+
+
+
+
+
+        document.querySelectorAll('[data-slug-target]').forEach(input => {
+        input.addEventListener('input', () => {
+            const targetSelector = input.getAttribute('data-slug-target');
+            const target = document.querySelector(targetSelector);
+            if (!target) return;
+
+            const appendId = input.getAttribute('data-append-id') || '';
+            const slug = input.value
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '_')   // use _ instead of -
+                .replace(/^_+|_+$/g, '');       // trim leading/trailing _
+
+            target.value = appendId ? `${slug}_${appendId}` : slug;
+        });
+    });
+
 });
 
 
