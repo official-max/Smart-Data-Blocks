@@ -21,6 +21,14 @@ class SDB_Metaboxes
             true
         );
 
+        wp_enqueue_style(
+            'sdb-metaboxes-css',
+            plugin_dir_url(__FILE__) . 'assets/css/metaboxes.css',
+            [],
+            '1.0'
+        );
+
+
         global $wpdb;
         $fields = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sdb_fields");
 
