@@ -70,7 +70,7 @@ created_at      -- timestamp
 /***********************************************************************************************************/
 
 === Smart Blocks ===
-Contributors: jatincode
+Contributors: L&Fcode
 Tags: custom-fields, acf, repeater, image-upload, meta-box
 Requires at least: 5.0
 Tested up to: 6.5
