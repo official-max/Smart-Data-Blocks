@@ -47,6 +47,9 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 
 //  Fetch all groups
 $groups = $wpdb->get_results("SELECT * FROM $table ORDER BY id DESC");
+
+$next_id = $wpdb->get_var("SELECT MAX(id) + 1 FROM $table");
+if (!$next_id) $next_id = 1;
 ?>
 
 <div class="wrap">
@@ -58,12 +61,12 @@ $groups = $wpdb->get_results("SELECT * FROM $table ORDER BY id DESC");
 
         <table class="form-table">
             <tr>
-                <th><label for="name">Group Name</label></th>
-                <td><input name="name" type="text" required class="regular-text" /></td>
+                <th><label for="name" change-input-target=>Group Name</label></th>
+                <td><input name="name" type="text" required class="regular-text" id="group-name" data-slug-target="#group-slug" data-append-id="<?= esc_attr($next_id) ?>" /></td>
             </tr>
             <tr>
                 <th><label for="key_slug">Unique Key (slug)</label></th>
-                <td><input name="key_slug" type="text" required class="regular-text" /></td>
+                <td><input name="key_slug" type="text" required class="regular-text" id="group-slug" /></td>
             </tr>
             <tr>
                 <th><label>Location Rules</label></th>
