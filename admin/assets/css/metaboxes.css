@@ -1,0 +1,105 @@
+/* admin\assets\css\metaboxes.css */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* General Container */
+.sdb-metabox-fields {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Field Labels */
+.sdb-metabox-fields label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Inputs and Textareas */
+.sdb-metabox-fields input[type="text"],
+.sdb-metabox-fields textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+/* Image Preview */
+.sdb-metabox-fields img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Image Buttons */
+.sdb-upload-image,
+.sdb-remove-image {
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+/* Repeater Section */
+.sdb-repeater {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+
+.sdb-repeater-items {
+    margin-top: 10px;
+}
+
+.sdb-repeater-item {
+    background: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-left: 4px solid #007cba;
+    border-radius: 3px;
+}
+
+.sdb-remove-repeater-item {
+    margin-top: 10px;
+    background-color: #dc3232;
+    color: #fff;
+}
+
+.sdb-add-repeater-item {
+    margin-top: 10px;
+    background-color: #007cba;
+    color: #fff;
+}
+
+/* Editor Overrides (Optional – depending on styling needs) */
+.wp-editor-wrap {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Mobile-friendly */
+@media (max-width: 600px) {
+
+    .sdb-metabox-fields input[type="text"],
+    .sdb-metabox-fields textarea {
+        font-size: 16px;
+    }
+
+    .sdb-repeater-item {
+        padding: 8px;
+    }
+}
