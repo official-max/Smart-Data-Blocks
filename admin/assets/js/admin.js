@@ -64,6 +64,7 @@ jQuery(document).ready(function ($) {
         index++;
     });
 
+
     // Auto-generate slug from input
     document.querySelectorAll('[data-slug-target]').forEach(input => {
         input.addEventListener('input', () => {
@@ -81,5 +82,10 @@ jQuery(document).ready(function ($) {
             target.value = appendId ? `${slug}_${appendId}` : slug;
         });
     });
+
+
+
+    // Global Funtion
+
 
 });

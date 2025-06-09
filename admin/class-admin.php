@@ -6,6 +6,7 @@ class SDB_Admin
     private $metaboxes;
     public function __construct()
     {
+        add_action('admin_init', [$this, 'handle_admin_form']);
         $this->metaboxes = new SDB_Metaboxes();
         add_action('admin_menu', [$this, 'admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
@@ -39,10 +40,20 @@ class SDB_Admin
 
     public function enqueue_assets($hook)
     {
+
+        // Global JS in Header
+        wp_enqueue_script(
+            'sdb-admin',
+            SDB_URL . 'admin/assets/js/function.js',
+            ['jquery', 'wp-util'],
+            SDB_VER,
+        );
+
         // Only load on our plugin pages
         $valid_pages = ['toplevel_page_smart-blocks', 'admin_page_sdb-fields'];
 
         if (in_array($hook, $valid_pages)) {
+
             wp_enqueue_style('sdb-admin', SDB_URL . 'admin/assets/css/admin.css', [], SDB_VER);
 
             wp_enqueue_script(
@@ -58,6 +69,15 @@ class SDB_Admin
                 'nonce' => wp_create_nonce('sdb_admin_nonce')
             ]);
         }
+    }
+
+    // Global Files Add 
+    public function handle_admin_form()
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        require_once SDB_PATH . 'admin/settings-handler.php';
     }
 
     public function render_groups_page()
@@ -76,6 +96,8 @@ class SDB_Admin
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
+
+        require_once SDB_PATH . 'admin/settings-handler.php'; // incude first
 
         require_once SDB_PATH . 'admin/settings-fields.php';
     }

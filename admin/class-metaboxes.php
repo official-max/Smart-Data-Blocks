@@ -13,11 +13,12 @@ class SDB_Metaboxes
     public function enqueue_admin_scripts()
     {
         wp_enqueue_media();
+
         wp_enqueue_script(
             'sdb-metaboxes-js',
             plugin_dir_url(__FILE__) . 'assets/js/metaboxes.js',
             ['jquery'],
-            '1.0',
+            SDB_VER,
             true
         );
 
@@ -25,7 +26,7 @@ class SDB_Metaboxes
             'sdb-metaboxes-css',
             plugin_dir_url(__FILE__) . 'assets/css/metaboxes.css',
             [],
-            '1.0'
+            SDB_VER
         );
 
 
@@ -266,7 +267,7 @@ class SDB_Metaboxes
                 case 'text':
                 case 'textarea':
                     // Allow HTML for textarea fields using wp_kses_post
-                    $sanitized = wp_kses_post($value); // This will allow HTML tags in the textarea field
+                    $sanitized = wp_kses_post($value);
                     update_post_meta($post_id, 'sdb_field_' . intval($field_id), $sanitized);
                     break;
 
