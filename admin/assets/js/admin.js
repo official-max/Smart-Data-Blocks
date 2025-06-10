@@ -1,6 +1,7 @@
 // \admin\assets\js\admin.js
 jQuery(document).ready(function ($) {
     console.log('admin.js loaded');
+    let index = 1;
 
     /*********************************************************************************************************
     ************************************************ Groups JS ************************************************
@@ -29,38 +30,44 @@ jQuery(document).ready(function ($) {
         });
     }
 
+
+    // Function to load value based on param
+    function handleParamChange($param) {
+        const $rule = $param.closest('.sdb-location-rule');
+        const $value = $rule.find('.sdb-value-select');
+        loadValues($param, $value);
+    }
+
     // Update value dropdown when param changes
     $('#sdb-location-rules').on('change', '.sdb-param-select', function () {
-        let $param = $(this);
-        let $value = $param.closest('.sdb-location-rule').find('.sdb-value-select');
-        loadValues($param, $value);
+        handleParamChange($(this));
     });
 
 
     // Load values for existing rules on page load
     $('.sdb-location-rule').each(function () {
-        let $param = $(this).find('.sdb-param-select');
-        let $value = $(this).find('.sdb-value-select');
-        loadValues($param, $value);
+        const $param = $(this).find('.sdb-param-select');
+        handleParamChange($param);
     });
 
     // Add new location rule and load values
-    let index = 1;
     $('#add-location-rule').click(function () {
-        let html = `<div class="sdb-location-rule" style="margin-top:10px;">
-            <select name="location[${index}][param]" class="sdb-param-select">
-                <option value="post_type">Post Type</option>
-                <option value="post">Page / Post</option>
-                <option value="page_template">Page Template</option>
-            </select>
-            <select name="location[${index}][value]" class="sdb-value-select"></select>
-        </div>`;
+        const html = `
+            <div class="sdb-location-rule" style="margin-top:10px;">
+                <select name="location[${index}][param]" class="sdb-param-select">
+                    <option value="post_type">Post Type</option>
+                    <option value="post">Page / Post</option>
+                    <option value="page_template">Page Template</option>
+                </select>
+                <select name="location[${index}][value]" class="sdb-value-select"></select>
+            </div>`;
 
         $('#sdb-location-rules').append(html);
 
-        let $newParam = $('#sdb-location-rules').find('.sdb-location-rule').last().find('.sdb-param-select');
-        let $newValue = $('#sdb-location-rules').find('.sdb-location-rule').last().find('.sdb-value-select');
-        loadValues($newParam, $newValue);
+        const $newRule = $('#sdb-location-rules .sdb-location-rule').last();
+        const $newParam = $newRule.find('.sdb-param-select');
+
+        handleParamChange($newParam);
         index++;
     });
 
@@ -82,10 +89,6 @@ jQuery(document).ready(function ($) {
             target.value = appendId ? `${slug}_${appendId}` : slug;
         });
     });
-
-
-
-    // Global Funtion
 
 
 });

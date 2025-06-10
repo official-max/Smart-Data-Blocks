@@ -72,13 +72,15 @@ if (!$next_id) $next_id = 1;
                         $rules = $edit_group ? $edit_group->location : [['param' => '', 'operator' => '==', 'value' => '']];
                         foreach ($rules as $i => $rule): ?>
                             <div class="sdb-location-rule">
-                                <select name="location[<?= $i ?>][param]" class="sdb-param-select">
+                                <select name="location[<?= $i ?>][param]" class="sdb-param-select" id="sdb-param-select">
+                                    <option value="" selected disabled>---- Select ----</option>
                                     <option value="post_type" <?= selected($rule['param'], 'post_type') ?>>Post Type</option>
                                     <option value="post" <?= selected($rule['param'], 'post') ?>>Page / Post</option>
                                     <option value="page_template" <?= selected($rule['param'], 'page_template') ?>>Page Template</option>
                                 </select>
 
-                                <select name="location[<?= $i ?>][value]" class="sdb-value-select">
+                                <select name="location[<?= $i ?>][value]" class="sdb-value-select" id="sdb-value-select" required>
+                                    <option value="" selected disabled>---- Select ----</option>
                                     <option value="<?= esc_attr($rule['value']) ?>"><?= esc_html($rule['value']) ?></option>
                                 </select>
                             </div>

@@ -81,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sdb_fields_nonce']) &
 $fields = $wpdb->get_results(
     $wpdb->prepare("SELECT * FROM {$wpdb->prefix}sdb_fields WHERE group_id = %d ORDER BY sort_order ASC", $group_id)
 );
-
 ?>
 
 <div class="wrap">
@@ -117,6 +116,10 @@ $fields = $wpdb->get_results(
                                 onclick="removeField(this, <?= esc_js($field->id); ?>)">
                                 Remove
                             </button>
+
+                            <span class="meta_key_wrapper" data-meta-key="<?= esc_attr('sdb_field_' . $field->id); ?>">
+                                <span class="meta_key dashicons dashicons-visibility" title="hide"></span>
+                            </span>
 
                         </p>
 
@@ -272,6 +275,37 @@ $fields = $wpdb->get_results(
             if (e.target.classList.contains('remove-sub-field')) {
                 e.target.closest('.sub-field').remove();
             }
+
+
+
+
+
+            if (e.target.classList.contains('meta_key')) {
+                const meta_key_wrapper = e.target.closest('.meta_key_wrapper');
+                const meta_key = meta_key_wrapper.getAttribute('data-meta-key');
+
+                // Check if meta key is already shown
+                const existingCode = meta_key_wrapper.querySelector('code');
+
+                if (existingCode) {
+                    // Hide meta key
+                    existingCode.remove();
+                    e.target.setAttribute('title', 'Show');
+                    e.target.classList.remove('dashicons-hidden');
+                    e.target.classList.add('dashicons-visibility');
+                } else {
+                    // Show meta key
+                    const code = document.createElement('code');
+                    code.textContent = meta_key;
+                    meta_key_wrapper.insertBefore(code, e.target);
+
+                    e.target.setAttribute('title', 'Hide');
+                    e.target.classList.remove('dashicons-visibility');
+                    e.target.classList.add('dashicons-hidden');
+                }
+            }
+
         });
+
     });
 </script>

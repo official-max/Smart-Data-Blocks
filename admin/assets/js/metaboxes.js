@@ -20,16 +20,24 @@ jQuery(document).ready(function ($) {
             const attachment = frame.state().get('selection').first().toJSON();
             $('#' + target).val(attachment.url);
             $('#' + target + '_preview').attr('src', attachment.url).show();
+            button.text('Change Image');
         });
 
         frame.open();
     });
 
+    // Remove image logic
     $('.sdb-metabox-fields').on('click', '.sdb-remove-image', function (e) {
         e.preventDefault();
-        const target = $(this).data('target');
+
+        const button = $(this);
+        const target = button.data('target');
+
         $('#' + target).val('');
         $('#' + target + '_preview').attr('src', '').hide();
+
+        // Reset upload button text
+        $('.sdb-upload-image[data-target="' + target + '"]').text('Select Image');
     });
 
     // Repeater: Add Item
@@ -61,12 +69,12 @@ jQuery(document).ready(function ($) {
 
             switch (subField.type) {
                 case 'textarea':
-                    itemHtml += `<textarea name="${subFieldName}" rows="3" style="width:90%;"></textarea>`;
+                    itemHtml += `<textarea name="${subFieldName}" rows="3"></textarea>`;
                     break;
 
                 case 'image':
                     itemHtml += `
-                        <img src="" id="${inputId}_preview" style="max-width:100px; display:none; margin-bottom:5px;" />
+                        <img src="" id="${inputId}_preview" />
                         <input type="hidden" name="${subFieldName}" id="${inputId}" />
                         <button type="button" class="button sdb-upload-image" data-target="${inputId}">Select Image</button>
                         <button type="button" class="button sdb-remove-image" data-target="${inputId}">Remove</button>
@@ -74,14 +82,14 @@ jQuery(document).ready(function ($) {
                     break;
 
                 default:
-                    itemHtml += `<input type="text" name="${subFieldName}" style="width:90%;" />`;
+                    itemHtml += `<input type="text" name="${subFieldName}" />`;
                     break;
             }
 
             itemHtml += `</p>`;
         });
 
-        itemHtml += `<button type="button" class="button sdb-remove-repeater-item">Remove</button>`;
+        itemHtml += `<button type="button" class="button dashicons dashicons-remove sdb-remove-repeater-item"></button>`;
         itemHtml += `</div>`;
 
         container.append(itemHtml);

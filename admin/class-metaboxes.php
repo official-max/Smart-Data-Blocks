@@ -152,7 +152,9 @@ class SDB_Metaboxes
                         <label><?= $label ?></label><br>
                         <img src="<?= esc_url($image_url) ?>" alt="" id="<?= $meta_key ?>_preview" />
                         <input type="hidden" name="<?= $field_name ?>" id="<?= $meta_key ?>" value="<?= esc_attr($value); ?>" />
-                        <button type="button" class="button sdb-upload-image" data-target="<?= $meta_key ?>">Select Image</button>
+                        <button type="button" class="button sdb-upload-image" data-target="<?= $meta_key ?>">
+                            <?= $image_url ? 'Change Image' : 'Select Image' ?>
+                        </button>
                         <button type="button" class="button sdb-remove-image" data-target="<?= $meta_key ?>">Remove Image</button>
                     </p>
                 <?php
@@ -206,12 +208,13 @@ class SDB_Metaboxes
                                             case 'image':
                                                 $img_url = esc_url($subval);
                                                 $input_id = esc_attr("repeater_{$field->id}_{$i}_{$subname}");
+                                                $button_label = $img_url ? 'Change Image' : 'Select Image';
 
                                                 echo <<<HTML
                                                     <p>
                                                         <img src="{$img_url}" alt="" id="{$input_id}_preview" />
                                                         <input type="hidden" name="{$field_name}[{$i}][{$subname}]" id="{$input_id}" value="{$img_url}" />
-                                                        <button type="button" class="button sdb-upload-image" data-target="{$input_id}">Select Image</button>
+                                                        <button type="button" class="button sdb-upload-image" data-target="{$input_id}"> {$button_label} </button>
                                                         <button type="button" class="button sdb-remove-image" data-target="{$input_id}">Remove Image</button>
                                                     </p>
                                                 HTML;
@@ -226,7 +229,7 @@ class SDB_Metaboxes
 
                                         echo '</p>';
                                     }
-                                    echo '<button type="button" class="button sdb-remove-repeater-item">Remove</button>';
+                                    echo '<button type="button" class="button dashicons dashicons-remove sdb-remove-repeater-item" title="Remove"></button>';
                                     echo '</div>';
                                 }
                             }
