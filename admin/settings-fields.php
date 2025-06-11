@@ -132,11 +132,15 @@ $fields = $wpdb->get_results(
                                         <div class="sub-field">
                                             <input type="text" name="fields[<?= $index ?>][sub_fields][<?= $sub_index ?>][label]" placeholder="Sub Field Label" value="<?= esc_attr($sub_field['label']) ?>" />
                                             <input type="text" name="fields[<?= $index ?>][sub_fields][<?= $sub_index ?>][name]" placeholder="sub_field_name" value="<?= esc_attr($sub_field['name']) ?>" />
+
                                             <select name="fields[<?= $index ?>][sub_fields][<?= $sub_index ?>][type]" class="field-type-select">
                                                 <option value="text" <?= selected($sub_field['type'], 'text') ?>>Text</option>
                                                 <option value="textarea" <?= selected($sub_field['type'], 'textarea') ?>>Textarea</option>
                                                 <option value="image" <?= selected($sub_field['type'], 'image') ?>>Image</option>
+                                                <option value="editor" <?= selected($sub_field['type'], 'editor') ?>>Editor</option>
                                             </select>
+
+
                                             <button type="button" class="remove-sub-field button">Remove</button>
                                         </div>
                                     <?php endforeach; ?>
@@ -264,6 +268,7 @@ $fields = $wpdb->get_results(
                         <option value="text">Text</option>
                         <option value="textarea">Textarea</option>
                         <option value="image">Image</option>
+                        <option value="editor">Editor</option>
                     </select>
                     <button type="button" class="remove-sub-field button">Remove</button>
                 </div>`;

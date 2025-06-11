@@ -74,11 +74,15 @@ jQuery(document).ready(function ($) {
 
                 case 'image':
                     itemHtml += `
-                        <img src="" id="${inputId}_preview" />
+                        <img src="" id="${inputId}_preview" style="max-width: 150px; display:none;" />
                         <input type="hidden" name="${subFieldName}" id="${inputId}" />
                         <button type="button" class="button sdb-upload-image" data-target="${inputId}">Select Image</button>
                         <button type="button" class="button sdb-remove-image" data-target="${inputId}">Remove</button>
                     `;
+                    break;
+
+                case 'editor':
+                    itemHtml += `<textarea id="${inputId}" name="${subFieldName}" class="sdb-editor-area"></textarea>`;
                     break;
 
                 default:
@@ -93,6 +97,29 @@ jQuery(document).ready(function ($) {
         itemHtml += `</div>`;
 
         container.append(itemHtml);
+
+        // Init TinyMCE for any new editor field
+        container.find('textarea.sdb-editor-area').each(function () {
+            const editorId = $(this).attr('id');
+
+            if (typeof tinymce !== 'undefined') {
+                if (tinymce.get(editorId)) {
+                    tinymce.get(editorId).remove();
+                }
+
+                tinymce.init({
+                    selector: `#${editorId}`,
+                    menubar: false,
+                    toolbar: 'bold italic underline bullist numlist blockquote',
+                    quickbars_selection_toolbar: 'bold italic | quicklink blockquote',
+                    height: 200
+                });
+            }
+
+            if (typeof quicktags !== 'undefined') {
+                quicktags({ id: editorId });
+            }
+        });
     });
 
     // Repeater: Remove Item
@@ -102,9 +129,17 @@ jQuery(document).ready(function ($) {
         const container = repeater.find('.sdb-repeater-items');
         const fieldName = repeater.data('field-name');
 
+        // Remove TinyMCE instance if present
+        $(this).closest('.sdb-repeater-item').find('textarea.sdb-editor-area').each(function () {
+            const editorId = $(this).attr('id');
+            if (tinymce.get(editorId)) {
+                tinymce.get(editorId).remove();
+            }
+        });
+
         $(this).closest('.sdb-repeater-item').remove();
 
-        // Reindex all remaining items
+        // Reindex remaining items
         container.children('.sdb-repeater-item').each(function (index) {
             $(this)
                 .find('input, textarea, select, img')

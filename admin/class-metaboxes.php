@@ -13,6 +13,7 @@ class SDB_Metaboxes
     public function enqueue_admin_scripts()
     {
         wp_enqueue_media();
+        wp_enqueue_editor();
 
         wp_enqueue_script(
             'sdb-metaboxes-js',
@@ -161,15 +162,17 @@ class SDB_Metaboxes
                     break;
 
                 case 'editor':
+                    // 🧠 Create safe editor ID (no brackets, no dot)
+                    $editor_id = 'sdb_editor_' . $field->id;
                 ?>
                     <p>
-                        <label for="<?= $meta_key ?>"><?= $label ?></label><br>
+                        <label for="<?= $editor_id ?>"><?= $label ?></label><br>
                         <?php
                         wp_editor(
-                            $value,
-                            $meta_key,
+                            $value,              // Saved value
+                            $editor_id,          // ID for TinyMCE (must be safe)
                             [
-                                'textarea_name' => $field_name,
+                                'textarea_name' => $field_name, // Actual <textarea name=""> (brackets allowed here)
                                 'textarea_rows' => 8,
                                 'media_buttons' => true,
                                 'tinymce'       => true,
@@ -181,54 +184,66 @@ class SDB_Metaboxes
                 <?php
                     break;
 
+
                 case 'repeater':
                     $repeater_data = $value ? json_decode($value, true) : [];
                     $sub_fields = $config['sub_fields'] ?? [];
                 ?>
                     <div class="sdb-repeater" data-field-id="<?= esc_attr($field->id) ?>" data-field-name="<?= esc_attr($field_name) ?>">
-                        <label><?= $label ?></label>
+                        <label><?= esc_html($label) ?></label>
                         <div class="sdb-repeater-items">
                             <?php
                             if ($repeater_data && is_array($repeater_data)) {
                                 foreach ($repeater_data as $i => $item) {
                                     echo '<div class="sdb-repeater-item">';
                                     foreach ($sub_fields as $subfield) {
-                                        $subname = $subfield['name'];
+                                        $subname  = $subfield['name'];
                                         $sublabel = $subfield['label'];
-                                        $subtype = $subfield['type'];
-                                        $subval = $item[$subname] ?? '';
+                                        $subtype  = $subfield['type'];
+                                        $subval   = $item[$subname] ?? '';
+                                        $input_name = $field_name . '[' . $i . '][' . esc_attr($subname) . ']';
 
                                         echo '<p><label>' . esc_html($sublabel) . '</label><br>';
 
                                         switch ($subtype) {
                                             case 'textarea':
-                                                echo '<p><textarea name="' . $field_name . '[' . $i . '][' . esc_attr($subname) . ']" rows="3">' . esc_textarea($subval) . '</textarea></p>';
+                                                echo '<textarea name="' . esc_attr($input_name) . '" rows="3">' . esc_textarea($subval) . '</textarea>';
                                                 break;
 
                                             case 'image':
                                                 $img_url = esc_url($subval);
-                                                $input_id = esc_attr("repeater_{$field->id}_{$i}_{$subname}");
+                                                $input_id = "repeater_{$field->id}_{$i}_" . esc_attr($subname);
                                                 $button_label = $img_url ? 'Change Image' : 'Select Image';
-
                                                 echo <<<HTML
-                                                    <p>
-                                                        <img src="{$img_url}" alt="" id="{$input_id}_preview" />
-                                                        <input type="hidden" name="{$field_name}[{$i}][{$subname}]" id="{$input_id}" value="{$img_url}" />
-                                                        <button type="button" class="button sdb-upload-image" data-target="{$input_id}"> {$button_label} </button>
-                                                        <button type="button" class="button sdb-remove-image" data-target="{$input_id}">Remove Image</button>
-                                                    </p>
+                                                    <img src="{$img_url}" alt="" id="{$input_id}_preview" style="max-width: 100px; display: block;" />
+                                                    <input type="hidden" name="{$input_name}" id="{$input_id}" value="{$img_url}" />
+                                                    <button type="button" class="button sdb-upload-image" data-target="{$input_id}"> {$button_label} </button>
+                                                    <button type="button" class="button sdb-remove-image" data-target="{$input_id}">Remove Image</button>
                                                 HTML;
                                                 break;
 
-
+                                            case 'editor':
+                                                $editor_id = 'sdb_editor_' . $field->id . '_' . $i . '_' . sanitize_key($subname);
+                                                wp_editor(
+                                                    $subval,
+                                                    $editor_id,
+                                                    [
+                                                        'textarea_name' => $input_name,
+                                                        'media_buttons' => true,
+                                                        'teeny'         => false,
+                                                        'quicktags'     => true,
+                                                    ]
+                                                );
+                                                break;
 
                                             default: // text
-                                                echo '<input type="text" name="' . $field_name . '[' . $i . '][' . esc_attr($subname) . ']" value="' . esc_attr($subval) . '" />';
+                                                echo '<input type="text" name="' . esc_attr($input_name) . '" value="' . esc_attr($subval) . '" />';
                                                 break;
                                         }
 
                                         echo '</p>';
                                     }
+
                                     echo '<button type="button" class="button dashicons dashicons-remove sdb-remove-repeater-item" title="Remove"></button>';
                                     echo '</div>';
                                 }
@@ -240,6 +255,7 @@ class SDB_Metaboxes
                     </div>
 <?php
                     break;
+
 
 
                 default:
