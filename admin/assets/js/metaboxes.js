@@ -1,169 +1,114 @@
+
+// admin/assets/js/metaboxes.js
 jQuery(document).ready(function ($) {
     console.log('metaboxes.js loaded');
 
-    const all_fields = window.sdbMetaboxData.fields;
-
-    // Image uploader for all image fields
+    // Image uploader
     $('.sdb-metabox-fields').on('click', '.sdb-upload-image', function (e) {
         e.preventDefault();
-
         const button = $(this);
         const target = button.data('target');
 
-        const frame = wp.media({
-            title: 'Select or Upload Image',
-            button: { text: 'Use this image' },
+        const custom_uploader = wp.media({
+            title: 'Select Image',
+            button: {
+                text: 'Use this image'
+            },
             multiple: false
         });
 
-        frame.on('select', function () {
-            const attachment = frame.state().get('selection').first().toJSON();
+        custom_uploader.on('select', function () {
+            const attachment = custom_uploader.state().get('selection').first().toJSON();
             $('#' + target).val(attachment.url);
-            $('#' + target + '_preview').attr('src', attachment.url).show();
-            button.text('Change Image');
+            $('#' + target + '_preview').attr('src', attachment.url);
         });
 
-        frame.open();
+        custom_uploader.open();
     });
 
-    // Remove image logic
+    // Image remover
     $('.sdb-metabox-fields').on('click', '.sdb-remove-image', function (e) {
         e.preventDefault();
-
-        const button = $(this);
-        const target = button.data('target');
-
+        const target = $(this).data('target');
         $('#' + target).val('');
-        $('#' + target + '_preview').attr('src', '').hide();
-
-        // Reset upload button text
-        $('.sdb-upload-image[data-target="' + target + '"]').text('Select Image');
+        $('#' + target + '_preview').attr('src', '');
     });
 
-    // Repeater: Add Item
-    $('.sdb-metabox-fields').on('click', '.sdb-add-repeater-item', function (e) {
-        e.preventDefault();
-
+    // Repeater: add new item
+    $('.sdb-metabox-fields').on('click', '.sdb-add-repeater-item', function () {
         const repeater = $(this).closest('.sdb-repeater');
-        const container = repeater.find('.sdb-repeater-items');
+        const itemsContainer = repeater.find('.sdb-repeater-items');
+        const fieldId = repeater.data('field-id');
         const fieldName = repeater.data('field-name');
-        const index = container.children().length;
+        const index = itemsContainer.children('.sdb-repeater-item').length;
 
-        const fieldIdMatch = fieldName.match(/sdb_fields\[(\d+)\]/);
-        if (!fieldIdMatch) return;
-
-        const fieldId = fieldIdMatch[1];
-        const fieldConfig = all_fields.find(f => f.id == fieldId);
+        const fieldConfig = sdbMetaboxData.fields.find(f => f.id == fieldId);
         if (!fieldConfig) return;
 
         const config = JSON.parse(fieldConfig.config);
         const subFields = config.sub_fields || [];
 
-        let itemHtml = `<div class="sdb-repeater-item">`;
+        let html = `<div class="sdb-repeater-item">`;
 
-        subFields.forEach(function (subField) {
-            const subFieldName = `${fieldName}[${index}][${subField.name}]`;
-            const inputId = `repeater_${fieldId}_${index}_${subField.name}`;
+        subFields.forEach(sub => {
+            const subname = sub.name;
+            const sublabel = sub.label;
+            const subtype = sub.type;
+            const inputName = `${fieldName}[${index}][${subname}]`;
+            const inputId = `repeater_${fieldId}_${index}_${subname}`;
 
-            itemHtml += `<p><label>${subField.label}</label><br>`;
+            html += `<p><label>${sublabel}</label><br>`;
 
-            switch (subField.type) {
+            switch (subtype) {
                 case 'textarea':
-                    itemHtml += `<textarea name="${subFieldName}" rows="3"></textarea>`;
+                    html += `<textarea name="${inputName}" rows="3"></textarea>`;
                     break;
 
                 case 'image':
-                    itemHtml += `
-                        <img src="" id="${inputId}_preview" style="max-width: 150px; display:none;" />
-                        <input type="hidden" name="${subFieldName}" id="${inputId}" />
+                    html += `
+                        <img src="" id="${inputId}_preview" style="max-width:100px; display:block;" />
+                        <input type="hidden" name="${inputName}" id="${inputId}" />
                         <button type="button" class="button sdb-upload-image" data-target="${inputId}">Select Image</button>
-                        <button type="button" class="button sdb-remove-image" data-target="${inputId}">Remove</button>
+                        <button type="button" class="button sdb-remove-image" data-target="${inputId}">Remove Image</button>
                     `;
                     break;
 
                 case 'editor':
-                    itemHtml += `<textarea id="${inputId}" name="${subFieldName}" class="sdb-editor-area"></textarea>`;
+                    html += `<textarea name="${inputName}" id="${inputId}" class="wp-editor-area" rows="8"></textarea>`;
                     break;
 
-                default:
-                    itemHtml += `<input type="text" name="${subFieldName}" />`;
+                default: // text
+                    html += `<input type="text" name="${inputName}" />`;
                     break;
             }
 
-            itemHtml += `</p>`;
+            html += `</p>`;
         });
 
-        itemHtml += `<button type="button" class="button dashicons dashicons-remove sdb-remove-repeater-item"></button>`;
-        itemHtml += `</div>`;
+        html += `<button type="button" class="button dashicons dashicons-remove sdb-remove-repeater-item" title="Remove"></button>`;
+        html += `</div>`;
 
-        container.append(itemHtml);
+        itemsContainer.append(html);
 
-        // Init TinyMCE for any new editor field
-        container.find('textarea.sdb-editor-area').each(function () {
-            const editorId = $(this).attr('id');
-
-            if (typeof tinymce !== 'undefined') {
-                if (tinymce.get(editorId)) {
-                    tinymce.get(editorId).remove();
-                }
-
-                tinymce.init({
-                    selector: `#${editorId}`,
-                    menubar: false,
-                    toolbar: 'bold italic underline bullist numlist blockquote',
-                    quickbars_selection_toolbar: 'bold italic | quicklink blockquote',
-                    height: 200
-                });
-            }
-
-            if (typeof quicktags !== 'undefined') {
-                quicktags({ id: editorId });
-            }
-        });
+        // Initialize any editor field inside the newly added item
+        const $newItem = itemsContainer.children('.sdb-repeater-item').last();
+        initializeEditorsInRepeater($newItem);
     });
 
-    // Repeater: Remove Item
-    $('.sdb-metabox-fields').on('click', '.sdb-remove-repeater-item', function (e) {
-        e.preventDefault();
-        const repeater = $(this).closest('.sdb-repeater');
-        const container = repeater.find('.sdb-repeater-items');
-        const fieldName = repeater.data('field-name');
-
-        // Remove TinyMCE instance if present
-        $(this).closest('.sdb-repeater-item').find('textarea.sdb-editor-area').each(function () {
-            const editorId = $(this).attr('id');
-            if (tinymce.get(editorId)) {
-                tinymce.get(editorId).remove();
-            }
-        });
-
+    // Repeater: remove item
+    $('.sdb-metabox-fields').on('click', '.sdb-remove-repeater-item', function () {
         $(this).closest('.sdb-repeater-item').remove();
-
-        // Reindex remaining items
-        container.children('.sdb-repeater-item').each(function (index) {
-            $(this)
-                .find('input, textarea, select, img')
-                .each(function () {
-                    if (this.name) {
-                        this.name = this.name.replace(/\[\d+\]/, `[${index}]`);
-                    }
-                    if (this.id) {
-                        this.id = this.id.replace(/_(\d+)_/, `_${index}_`);
-                    }
-                    if ($(this).is('img')) {
-                        $(this).attr('id', this.id + '_preview');
-                    }
-                });
-
-            $(this)
-                .find('.sdb-upload-image, .sdb-remove-image')
-                .each(function () {
-                    const target = $(this).data('target');
-                    if (target) {
-                        const newTarget = target.replace(/_(\d+)_/, `_${index}_`);
-                        $(this).attr('data-target', newTarget);
-                    }
-                });
-        });
     });
+
+    // 🔁 Initialize editor on page load
+    $('.sdb-metabox-fields').find('textarea.wp-editor-area').each(function () {
+        const editorId = $(this).attr('id');
+        if (!tinymce.get(editorId)) {
+            if (typeof QTags !== 'undefined' && QTags.instances[editorId]) {
+                QTags.instances[editorId].remove();
+            }
+            tinymce.execCommand('mceAddEditor', true, editorId);
+        }
+    });
+
 });

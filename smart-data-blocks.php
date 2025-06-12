@@ -9,10 +9,15 @@
 
 defined('ABSPATH') || exit;
 
+if (!defined('CONCATENATE_SCRIPTS')) { // Js and Css ko combine kr ke load krta hai (Use for Editor)
+    define('CONCATENATE_SCRIPTS', false);
+}
+
 // Define constants
 define('SDB_PATH', plugin_dir_path(__FILE__));
 define('SDB_URL', plugin_dir_url(__FILE__));
 define('SDB_VER', '1.0');
+
 
 // Includes
 require_once SDB_PATH . 'includes/db-schema.php';

@@ -3,17 +3,16 @@
 
 class SDB_Metaboxes
 {
-    public function __construct()
+    public function __construct() // Use hooks
     {
         add_action('add_meta_boxes', [$this, 'add_conditional_metaboxes']);
         add_action('save_post', [$this, 'save_metabox_data']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
     }
 
-    public function enqueue_admin_scripts()
+    public function enqueue_admin_scripts() // Add js and css
     {
         wp_enqueue_media();
-        wp_enqueue_editor();
 
         wp_enqueue_script(
             'sdb-metaboxes-js',
@@ -41,6 +40,9 @@ class SDB_Metaboxes
 
     public function add_conditional_metaboxes($post)
     {
+
+        /* var_dump($post); // post type */
+
         if (is_string($post)) {
             $post = get_post();
         }

@@ -53,7 +53,7 @@ class SDB_Admin
         $valid_pages = ['toplevel_page_smart-blocks', 'admin_page_sdb-fields'];
 
         if (in_array($hook, $valid_pages)) {
-
+            wp_enqueue_editor();
             wp_enqueue_style('sdb-admin', SDB_URL . 'admin/assets/css/admin.css', [], SDB_VER);
 
             wp_enqueue_script(
