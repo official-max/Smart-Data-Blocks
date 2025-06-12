@@ -64,6 +64,15 @@ class SDB_Admin
                 true
             );
 
+            wp_enqueue_script(
+                'sdb-fields-builder',
+                SDB_URL . 'admin/js/fields-builder.js',
+                ['jquery'],
+                SDB_VER,
+                true
+            );
+
+
             wp_localize_script('sdb-admin', 'sdb_admin', [
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('sdb_admin_nonce')
@@ -98,7 +107,6 @@ class SDB_Admin
         }
 
         require_once SDB_PATH . 'admin/settings-handler.php'; // incude first
-
         require_once SDB_PATH . 'admin/settings-fields.php';
     }
 }
