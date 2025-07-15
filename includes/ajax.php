@@ -10,9 +10,20 @@ add_action('wp_ajax_sdb_fetch_location_values', function () {
     $values = [];
 
     if ($param === 'post_type') {
-        $post_types = get_post_types(['public' => true], 'objects');
+        // $post_types = get_post_types(['public' => true], 'objects');
+        // foreach ($post_types as $pt) {
+        //     $values[$pt->name] = $pt->label;
+        // }
+
+        $post_types = get_post_types([], 'objects');
         foreach ($post_types as $pt) {
-            $values[$pt->name] = $pt->label;
+            // Allow 'post' and 'page', and all CPTs that are not built-in
+            if (
+                in_array($pt->name, ['post', 'page']) ||  // always include post/page
+                !$pt->_builtin                           // only custom post types
+            ) {
+                $values[$pt->name] = $pt->label;
+            }
         }
     } elseif ($param === 'post') {
         // List of pages + posts, or just pages if you want

@@ -53,7 +53,7 @@ class SDB_Admin
         $valid_pages = ['toplevel_page_smart-blocks', 'admin_page_sdb-fields'];
 
         if (in_array($hook, $valid_pages)) {
-            wp_enqueue_editor();
+
             wp_enqueue_style('sdb-admin', SDB_URL . 'admin/assets/css/admin.css', [], SDB_VER);
 
             wp_enqueue_script(
@@ -63,15 +63,6 @@ class SDB_Admin
                 SDB_VER,
                 true
             );
-
-            wp_enqueue_script(
-                'sdb-fields-builder',
-                SDB_URL . 'admin/js/fields-builder.js',
-                ['jquery'],
-                SDB_VER,
-                true
-            );
-
 
             wp_localize_script('sdb-admin', 'sdb_admin', [
                 'ajax_url' => admin_url('admin-ajax.php'),
@@ -107,6 +98,7 @@ class SDB_Admin
         }
 
         require_once SDB_PATH . 'admin/settings-handler.php'; // incude first
+
         require_once SDB_PATH . 'admin/settings-fields.php';
     }
 }

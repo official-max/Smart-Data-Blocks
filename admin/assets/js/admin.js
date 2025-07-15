@@ -52,15 +52,20 @@ jQuery(document).ready(function ($) {
 
     // Add new location rule and load values
     $('#add-location-rule').click(function () {
+        // Count current number of rules using direct children
+        const parent = document.querySelector('#sdb-location-rules');
+        const currentCount = parent.querySelectorAll(':scope > .sdb-location-rule').length;
+        console.log(currentCount);
+
         const html = `
-            <div class="sdb-location-rule" style="margin-top:10px;">
-                <select name="location[${index}][param]" class="sdb-param-select">
-                    <option value="post_type">Post Type</option>
-                    <option value="post">Page / Post</option>
-                    <option value="page_template">Page Template</option>
-                </select>
-                <select name="location[${index}][value]" class="sdb-value-select"></select>
-            </div>`;
+        <div class="sdb-location-rule" style="margin-top:10px;">
+            <select name="location[${currentCount}][param]" class="sdb-param-select">
+                <option value="post_type">Post Type</option>
+                <option value="post">Page / Post</option>
+                <option value="page_template">Page Template</option>
+            </select>
+            <select name="location[${currentCount}][value]" class="sdb-value-select"></select>
+        </div>`;
 
         $('#sdb-location-rules').append(html);
 
@@ -68,7 +73,8 @@ jQuery(document).ready(function ($) {
         const $newParam = $newRule.find('.sdb-param-select');
 
         handleParamChange($newParam);
-        index++;
+
+        index++; // If you plan to use it elsewhere
     });
 
 

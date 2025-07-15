@@ -64,13 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sdb_fields_nonce']) &
             ]);
             $existing_ids[] = $wpdb->insert_id;
         }
-
-        // Delete removed fields (those not in submitted list) Delete in database
-        // if (!empty($existing_ids)) {
-        //     $placeholders = implode(',', array_fill(0, count($existing_ids), '%d'));
-        //     $sql = "DELETE FROM {$wpdb->prefix}sdb_fields WHERE group_id = %d AND id NOT IN ($placeholders)";
-        //     $wpdb->query($wpdb->prepare($sql, array_merge([$group_id], $existing_ids)));
-        // }
     }
 
     echo '<div class="notice notice-success"><p>Fields saved successfully!</p></div>';
@@ -106,6 +99,7 @@ $fields = $wpdb->get_results(
                                 <option value="text" <?= selected($config['type'], 'text') ?>>Text</option>
                                 <option value="textarea" <?= selected($config['type'], 'textarea') ?>>Textarea</option>
                                 <option value="image" <?= selected($config['type'], 'image') ?>>Image</option>
+                                <option value="gallery" <?= selected($config['type'], 'gallery') ?>>Gallery</option>
                                 <option value="editor" <?= selected($config['type'], 'editor') ?>>Editor</option>
                                 <option value="repeater" <?= selected($config['type'], 'repeater') ?>>Repeater</option>
                             </select>
@@ -132,15 +126,12 @@ $fields = $wpdb->get_results(
                                         <div class="sub-field">
                                             <input type="text" name="fields[<?= $index ?>][sub_fields][<?= $sub_index ?>][label]" placeholder="Sub Field Label" value="<?= esc_attr($sub_field['label']) ?>" />
                                             <input type="text" name="fields[<?= $index ?>][sub_fields][<?= $sub_index ?>][name]" placeholder="sub_field_name" value="<?= esc_attr($sub_field['name']) ?>" />
-
                                             <select name="fields[<?= $index ?>][sub_fields][<?= $sub_index ?>][type]" class="field-type-select">
                                                 <option value="text" <?= selected($sub_field['type'], 'text') ?>>Text</option>
                                                 <option value="textarea" <?= selected($sub_field['type'], 'textarea') ?>>Textarea</option>
                                                 <option value="image" <?= selected($sub_field['type'], 'image') ?>>Image</option>
-                                                <option value="editor" <?= selected($sub_field['type'], 'editor') ?>>Editor</option>
+                                                <option value="gallery" <?= selected($config['type'], 'gallery') ?>>Gallery</option>
                                             </select>
-
-
                                             <button type="button" class="remove-sub-field button">Remove</button>
                                         </div>
                                     <?php endforeach; ?>
@@ -161,42 +152,39 @@ $fields = $wpdb->get_results(
 
 <script>
     // Add Fields
-    function addField(container, index) {
-        const html = `
-            <div class="sdb-field" data-index="${index}">
-                <div class="field-group">
-                    <p>
-                        <input type="text" name="fields[${index}][label]" placeholder="Field Label" />
-                        <input type="text" name="fields[${index}][name]" placeholder="field_name" />
-                        <select name="fields[${index}][type]" class="field-type-select">
-                            <option value="text">Text</option>
-                            <option value="textarea">Textarea</option>
-                            <option value="image">Image</option>
-                            <option value="editor">Editor</option>
-                            <option value="repeater">Repeater</option>
-                        </select>
-                        <button 
-                            type="button"  
-                            class="remove-field button"
-                            onclick="removeField(this, 0)">
-                            Remove
-                        </button>
-                    </p>
-                    <div class="sub-fields-container" style="display:none;">
-                        <h4>Sub Fields (Repeater)</h4>
-                        <div class="sub-fields-list"></div>
-                        <button 
-                            type="button" 
-                            class="add-sub-field button ">
-                            + Add Sub Field
-                        </button>
-                    </div>
-            </div>
+    function addField(container) {
+        const index = container.children.length;
 
-            </div>`;
+        const html = `
+        <div class="sdb-field" data-index="${index}">
+            <div class="field-group">
+                <p>
+                    <input type="text" name="fields[${index}][label]" placeholder="Field Label" />
+                    <input type="text" name="fields[${index}][name]" placeholder="field_name" />
+                    <select name="fields[${index}][type]" class="field-type-select">
+                        <option value="text">Text</option>
+                        <option value="textarea">Textarea</option>
+                        <option value="image">Image</option>
+                        <option value="gallery">Gallery</option>
+                        <option value="editor">Editor</option>
+                        <option value="repeater">Repeater</option>
+                    </select>
+                    <button type="button" class="remove-field button" onclick="removeField(this, 0)">
+                        Remove
+                    </button>
+                </p>
+                <div class="sub-fields-container" style="display:none;">
+                    <h4>Sub Fields (Repeater)</h4>
+                    <div class="sub-fields-list"></div>
+                    <button type="button" class="add-sub-field button">+ Add Sub Field</button>
+                </div>
+            </div>
+        </div>
+    `;
+
         container.insertAdjacentHTML('beforeend', html);
-        index++;
     }
+
 
 
     // Remove Fields
@@ -234,7 +222,9 @@ $fields = $wpdb->get_results(
         const container = document.getElementById('sdb-fields-container');
 
         // Add new main field
-        document.getElementById('add-field').addEventListener('click', addField.bind(null, container, index));
+        document.getElementById('add-field').addEventListener('click', () => {
+            addField(container);
+        });
 
         // Show/hide sub-fields container on type change
         container.addEventListener('change', (e) => {
@@ -268,7 +258,7 @@ $fields = $wpdb->get_results(
                         <option value="text">Text</option>
                         <option value="textarea">Textarea</option>
                         <option value="image">Image</option>
-                        <option value="editor">Editor</option>
+                        <option value="gallery">Gallery</option>
                     </select>
                     <button type="button" class="remove-sub-field button">Remove</button>
                 </div>`;
@@ -280,8 +270,6 @@ $fields = $wpdb->get_results(
             if (e.target.classList.contains('remove-sub-field')) {
                 e.target.closest('.sub-field').remove();
             }
-
-
 
 
 

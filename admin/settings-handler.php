@@ -17,7 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sdb_add_group_nonce']
             $param = $rule['param'] ?? '';
             $operator = $rule['operator'] ?? '==';
             $value = $rule['value'] ?? '';
+
+
             if ($param && $operator && $value) {
+
+                // **HTML special chars encode kar rahe hain yahan**
+                $param = htmlspecialchars($param, ENT_QUOTES, 'UTF-8');
+                $operator = htmlspecialchars($operator, ENT_QUOTES, 'UTF-8');
+                $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+
                 $location[] = compact('param', 'operator', 'value');
             }
         }
