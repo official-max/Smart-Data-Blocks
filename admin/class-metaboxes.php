@@ -368,13 +368,21 @@ class SDB_Metaboxes
                     break;
 
                 case 'image':
-                    if (empty($raw_val)) {
-                        $sanitized_item[$key] = ''; // Or null, if you prefer
-                    } elseif (is_numeric($raw_val)) {
-                        $sanitized_item[$key] = absint($raw_val);
+                    // 1 · Sanitise ------------------------------------
+                    if (empty($value)) {
+                        $sanitized = '';                   // or null if you prefer
+                    } elseif (is_numeric($value)) {
+                        $sanitized = absint($value);       // ID
                     } else {
-                        $sanitized_item[$key] = esc_url_raw($raw_val);
+                        $sanitized = esc_url_raw($value);  // fallback URL
                     }
+
+                    // 2 · Save ----------------------------------------
+                    update_post_meta(
+                        $post_id,
+                        $meta_key,
+                        $sanitized
+                    );
                     break;
 
                 case 'gallery':
